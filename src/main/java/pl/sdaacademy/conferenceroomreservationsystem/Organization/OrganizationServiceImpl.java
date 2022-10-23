@@ -2,7 +2,11 @@ package pl.sdaacademy.conferenceroomreservationsystem.Organization;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import pl.sdaacademy.conferenceroomreservationsystem.SortType;
 
 import javax.persistence.EntityExistsException;
 import java.util.List;
@@ -19,12 +23,26 @@ class OrganizationServiceImpl implements OrganizationService{
     private final OrganizationMapper organizationMapper;
 
     @Override
-    public List<OrganizationDTO> getOrganizationList() {
-        return organizationRepository.findAll()
-                .stream()
-                .map(organization -> {
-                    return organizationMapper.mapOrganizationToDTO(organization);
-                }).collect(Collectors.toList());
+    public List<OrganizationDTO> getOrganizationList(SortType sortType) {
+        if (sortType != null){
+            return organizationRepository.findAll(sortType.getSort("name"))
+                    .stream()
+                    .map(organization -> {
+                        return organizationMapper.mapOrganizationToDTO(organization);
+                    }).collect(Collectors.toList());
+        } else {
+            return organizationRepository.findAll()
+                    .stream()
+                    .map(organization -> {
+                        return organizationMapper.mapOrganizationToDTO(organization);
+                    }).collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public Organization getByName(String name) {
+        return organizationRepository.findByName(name)
+                .orElseThrow(()-> new NoSuchElementException("No organization found"));
     }
 
     @Override
@@ -38,7 +56,7 @@ class OrganizationServiceImpl implements OrganizationService{
             organization = organizationMapper.mapAddOrganizationRequestToOrganization(request);
         }
         else {
-            throw (new IllegalArgumentException());
+            throw new IllegalArgumentException();
         }
 
         organization = organizationRepository.save(organization);

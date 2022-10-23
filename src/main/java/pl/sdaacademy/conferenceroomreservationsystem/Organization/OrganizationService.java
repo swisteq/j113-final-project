@@ -1,9 +1,13 @@
 package pl.sdaacademy.conferenceroomreservationsystem.Organization;
 
+import pl.sdaacademy.conferenceroomreservationsystem.SortType;
+
 import java.util.List;
 
 public interface OrganizationService {
-    List<OrganizationDTO> getOrganizationList();
+    List<OrganizationDTO> getOrganizationList(SortType sortType);
+
+    Organization getByName(String name);
 
     OrganizationDTO addOrganization(AddOrganizationRequest request);
 

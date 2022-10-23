@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddOrganizationRequest {
-    @NotBlank
-    @Size(min = 2, max = 20)
+    @NotBlank(message = "Can't be null or blank!")
+    @Size(min = 2, max = 20, message = "Must contain 2 to 20 characters!")
     private String organizationName;
 }
